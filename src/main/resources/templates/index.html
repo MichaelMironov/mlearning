@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Anomaly Detector Admin</title>
+</head>
+<body>
+<h1>Anomaly Detector Admin</h1>
+
+<!-- Форма для обучения модели -->
+<form method="post" enctype="multipart/form-data" action="/train">
+    <h2>Training</h2>
+    <label for="sourceType">Source Type:</label>
+    <select name="sourceType" id="sourceType" required>
+        <option th:each="type : ${sourceTypes}" th:value="${type}" th:text="${type}">File</option>
+    </select><br>
+    <label for="fileType">File Type:</label>
+    <select name="fileType" id="fileType" required>
+        <option th:each="type : ${fileTypes}" th:value="${type}" th:text="${type}">CSV</option>
+    </select><br>
+    <label for="algorithm">Algorithm:</label>
+    <select name="algorithm" id="algorithm" required>
+        <option th:each="algorithm : ${algorithms}" th:value="${algorithm}" th:text="${algorithm}">KMeans</option>
+    </select><br>
+    <label for="file">File:</label>
+    <input type="file" name="file" id="file" required><br>
+    <button type="submit">Train Model</button>
+</form>
+<p th:text="${trainingStatus}">Status of training will appear here</p>
+
+<!-- Форма для проверки на аномалии -->
+<form method="post" enctype="multipart/form-data" action="/detect">
+    <h2>Anomaly Detection</h2>
+    <label for="testFile">Test File:</label>
+    <input type="file" name="testFile" id="testFile" required><br>
+    <label for="anomalyMetric">Anomaly Metric:</label>
+    <select name="anomalyMetric" id="anomalyMetric" required>
+        <option th:each="metric : ${anomalyMetrics}" th:value="${metric}" th:text="${metric}">Manhattan</option>
+    </select><br>
+    <button type="submit">Detect Anomalies</button>
+</form>
+<p th:text="${detectionStatus}">Status of detection will appear here</p>
+
+</body>
+</html>
