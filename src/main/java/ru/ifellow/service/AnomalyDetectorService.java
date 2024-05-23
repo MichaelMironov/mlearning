@@ -43,9 +43,15 @@ public class AnomalyDetectorService {
                     .load(tempFile.getPath());
 
             List<String> features = List.of(data.columns()); // Используем все колонки как признаки
+            System.out.println("Loaded data schema: " + data.schema().treeString());
             clusteringModel = trainClusteringModel(algorithm, data, features);
-            return "Model trained successfully";
+
+            // Сохраняем модель на диск
+            String modelPath = saveModelToFile(clusteringModel, algorithm);
+
+            return "Model trained successfully. <a href='/downloadModel?path=" + modelPath + "'>Download model</a>";
         } catch (Exception e) {
+            e.printStackTrace();
             return "Error during model training: " + e.getMessage();
         }
     }
@@ -62,6 +68,7 @@ public class AnomalyDetectorService {
             boolean anomaliesDetected = true; // Пример
             return anomaliesDetected ? "Anomalies detected" : "No anomalies detected";
         } catch (Exception e) {
+            e.printStackTrace();
             return "Error during anomaly detection: " + e.getMessage();
         }
     }
@@ -115,6 +122,18 @@ public class AnomalyDetectorService {
             e.printStackTrace();
             throw e;
         }
+    }
+
+    private String saveModelToFile(Model<?> model, String algorithm) throws IOException {
+        String modelDir = "models/" + algorithm + "_" + System.currentTimeMillis();
+        if (model instanceof KMeansModel) {
+            ((KMeansModel) model).write().overwrite().save(modelDir);
+        } else if (model instanceof BisectingKMeansModel) {
+            ((BisectingKMeansModel) model).write().overwrite().save(modelDir);
+        } else {
+            throw new IllegalArgumentException("Unsupported model type: " + model.getClass().getName());
+        }
+        return modelDir;
     }
 
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {

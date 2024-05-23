@@ -80,6 +80,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.12</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
         <dependency>
             <!-- Workaround for Spark + Spring Boot co-exist causing `janino` dependency need to be specific -->
